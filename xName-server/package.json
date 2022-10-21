@@ -4,10 +4,11 @@
   "description": "xName Server",
   "main": "src/index.js",
   "engines": {
-    "node": ">=16.0.0"
+    "node": "16.x"
   },
   "type": "module",
   "scripts": {
+    "start": "yarn dev",
     "dev": "cross-env NODE_ENV=development nodemon --experimental-modules --experimental-specifier-resolution=node src/index.js",
     "deploy-dev": "cross-env NODE_ENV=development DISABLE_ESLINT_PLUGIN=true nodemon -L src/index.js",
     "test": "jest -i --colors --verbose --detectOpenHandles",
