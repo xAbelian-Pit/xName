@@ -61,7 +61,7 @@ contract DotRegistry is Dot, Ownable {
     constructor(address _coreBridgedAddress) {
         records[0x0].owner = msg.sender;
         CORE_BRIDGE_ADDRESS = _coreBridgedAddress;
-        chainIds.push(IWormhole(CORE_BRIDGE_ADDRESS).chainId());
+//        chainIds.push(IWormhole(CORE_BRIDGE_ADDRESS).chainId());
     }
 
     function setRegistryDelegate(address[] memory delegates, bool[] memory permitted) external onlyOwner {
