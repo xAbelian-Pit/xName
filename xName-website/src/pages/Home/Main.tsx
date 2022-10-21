@@ -67,7 +67,8 @@ export default function HomePageMain() {
             theme: 'dark',
           })
 
-          await axios.post('http://localhost:8080/register', {
+          // http://localhost:8080/register
+          await axios.post('https://xname-server-63lja.ondigitalocean.app/register', {
             txHash: tx.hash,
             originChain: registryChainNames[chain.id],
           })
