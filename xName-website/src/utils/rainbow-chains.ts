@@ -23,8 +23,29 @@ import { Chain } from '@rainbow-me/rainbowkit'
 //   testnet: false,
 // };
 
+export const avalancheFujiChain: Chain = {
+  id: 43113,
+  name: 'Avalanche Fuji',
+  network: 'avalanche-fuji',
+  iconUrl: 'https://cryptologos.cc/logos/avalanche-avax-logo.svg',
+  iconBackground: '#fff',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'Avalanche',
+    symbol: 'AVAX',
+  },
+  rpcUrls: {
+    default: 'https://api.avax-test.network/ext/bc/C/rpc',
+  },
+  blockExplorers: {
+    default: { name: 'SnowTrace', url: 'https://testnet.snowtrace.io' },
+    etherscan: { name: 'SnowTrace', url: 'https://testnet.snowtrace.io' },
+  },
+  testnet: true,
+}
+
 export const localEvm1: Chain = {
-  id: 1,
+  id: 31337,
   name: 'Local EVM 1',
   network: 'ethereum',
   nativeCurrency: { decimals: 18, name: 'Ether', symbol: 'ETH' },

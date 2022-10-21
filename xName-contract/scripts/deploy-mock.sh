@@ -37,3 +37,6 @@ jq -n \
   --arg worm3 "$worm_avax" \
   '{evm1: $evm1, evm2: $evm2, evm3: $evm3, worm1: $worm1, worm2: $worm2, worm3: $worm3}' \
   > deployed-mock.json
+
+cp deployed-mock.json ../../xName-server/src/constants/deployed-mock.json
+cp deployed-mock.json ../../xName-website/src/utils/deployed-mock.json

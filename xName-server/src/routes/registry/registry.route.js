@@ -12,9 +12,9 @@ router.post(
   '/register',
   validate(registryValidation.register),
   catchAsync(async (req, res, next) => {
-    const options = pick(req.body, ['name', 'description'])
-    const transactionHash = await registryService.register({ ...options, user: req.user })
-    res.locals = { transaction: transactionHash }
+    const options = pick(req.body, ['originChain', 'txHash'])
+    await registryService.register({ ...options, user: req.user })
+    // res.locals = { transaction: transactionHash }
     next()
   }),
 )

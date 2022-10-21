@@ -2,7 +2,7 @@
 pragma solidity ^0.8.9;
 
 import { Ownable } from '@openzeppelin/contracts/access/Ownable.sol';
-import 'hardhat/console.sol';
+//import 'hardhat/console.sol';
 
 import { Dot } from './interfaces/Dot.sol';
 import { IWormhole } from './interfaces/Wormhole/IWormhole.sol';
@@ -36,7 +36,7 @@ contract DotRegistry is Dot, Ownable {
     // Supported Wormhole chain IDs
     // NOTE: Only EVMs for now... I need to learn Anchor...
     // uint16[] private chainIds = [2, 5, 6];
-    uint16[] public chainIds = [2, 6];
+    uint16[] public chainIds = [2, 5, 6, 13];
 
     /// @dev Contract address (Wormhole-format) of deployed DotRegistry on other chains
     mapping(bytes32 => bool) public registryDelegates;
@@ -61,11 +61,18 @@ contract DotRegistry is Dot, Ownable {
     constructor(address _coreBridgedAddress) {
         records[0x0].owner = msg.sender;
         CORE_BRIDGE_ADDRESS = _coreBridgedAddress;
+        chainIds.push(IWormhole(CORE_BRIDGE_ADDRESS).chainId());
     }
 
-    function setRegistryDelegate(address delegate, bool permitted) external onlyOwner {
-        require(delegate != address(0));
-        registryDelegates[addressToBytes32(delegate)] = permitted;
+    function setRegistryDelegate(address[] memory delegates, bool[] memory permitted) external onlyOwner {
+        require(delegates.length == permitted.length, 'Length mismatch');
+        for (uint i = 0; i < delegates.length;) {
+            require(delegates[i] != address(0));
+            registryDelegates[addressToBytes32(delegates[i])] = permitted[i];
+            unchecked {
+                i++;
+            }
+        }
     }
 
     function addSupportedChainId(uint16 chainId) external onlyOwner {
@@ -190,9 +197,10 @@ contract DotRegistry is Dot, Ownable {
     //     return operators[owner][operator];
     // }
 
-    function isPendingResolvedForAll(bytes32 node) internal returns (bool) {
+    function isPendingResolvedForAll(bytes32 node) internal view returns (bool) {
         for (uint i = 0; i < chainIds.length;) {
-            if (!pendingResolved[node][chainIds[i]]) return false;
+            // don't return false if it's checking self chain ID
+            if (chainIds[i] != wormhole().chainId() && !pendingResolved[node][chainIds[i]]) return false;
             unchecked {
                 i++;
             }
@@ -228,7 +236,9 @@ contract DotRegistry is Dot, Ownable {
         // console.logBytes32(node);
         // console.log('Wormhole ChainID: ', wormhole().chainId());
 
-        sequence = wormhole().publishMessage(nonce, encodeRegistration(registration), 1);
+        // two Benjamins for instant finality in testnet
+        sequence = wormhole().publishMessage(nonce, encodeRegistration(registration), 200);
+        nonce++;
         // console.log('Sequence: ', sequence);
     }
 
@@ -261,6 +271,7 @@ contract DotRegistry is Dot, Ownable {
 
         if (isPendingResolvedForAll(reg.node)) {
             // All chains have verified that there's no conflict on their chain
+            // Finalize the state
             resetPending(reg.node);
             records[reg.node].owner = bytes32ToAddress(reg.owner);
             records[reg.node].resolver = bytes32ToAddress(reg.resolver);
@@ -296,7 +307,9 @@ contract DotRegistry is Dot, Ownable {
                 pendingResolved[reg.node][wormhole().chainId()] = true;
             }
 
-            sequence = wormhole().publishMessage(nonce, encodeRegistration(reg), 1);
+            // two-hunnet for instant finality in testnet
+            sequence = wormhole().publishMessage(nonce, encodeRegistration(reg), 200);
+            nonce++;
         }
     }
 

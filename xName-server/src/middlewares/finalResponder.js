@@ -1,4 +1,4 @@
-import { catchAsync, deepExtend, getBearerTokenFromHeaders } from '../utils'
+import { catchAsync, deepExtend } from '../utils'
 
 /**
  * Final middleware before sending response to user
@@ -33,11 +33,6 @@ export default catchAsync(async (req, res, next) => {
 
   // finally, deep extend (to copy everything from passOn to resJson.payload
   resJson.payload = deepExtend(resJson.payload, passOn)
-
-  // Check if access token was renewed silently. If so, return it to the client.
-  if (req.headers.auth_renewed) {
-    resJson.payload.accessToken = getBearerTokenFromHeaders(req)
-  }
 
   if (resJson.error) res.status(passOn.error.statusCode || 500).send(resJson)
   else res.status(200).send(resJson)

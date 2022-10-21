@@ -22,13 +22,16 @@ import './style/index.css'
 import App from './pages/App'
 import { persistor, store } from './states'
 import theme from './theme'
-import { localEvm1, localEvm2, localEvm3 } from './utils/rainbow-chains'
+import {
+  // localEvm1, localEvm2, localEvm3,
+  avalancheFujiChain,
+} from './utils/rainbow-chains'
 
 const { chains, provider } = configureChains(
   [
-    localEvm1, // default chain
-    localEvm2, localEvm3,
-    // chain.goerli, chain.polygonMumbai,
+    // localEvm1, // default chain
+    // localEvm2, localEvm3,
+    chain.goerli, chain.polygonMumbai, avalancheFujiChain,
   ],
   [
     // alchemyProvider({ alchemyId: process.env.ALCHEMY_ID }),

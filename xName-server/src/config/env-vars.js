@@ -16,6 +16,8 @@ const envVarsSchema = Joi.object()
     NODE_ENV: Joi.string().valid('production', 'development', 'test').required(),
     PORT: Joi.number().default(3000),
 
+    PRIVATE_KEY: Joi.string().required(),
+
     SESSION_SECRET: Joi.string().required().description('Secret key for protecting sessions'),
   })
   .unknown()
@@ -29,6 +31,8 @@ if (error) {
 export default {
   env: envVars.NODE_ENV,
   port: envVars.PORT,
+
+  privateKey: envVars.PRIVATE_KEY,
 
   sessionSecret: envVars.SESSION_SECRET,
 }

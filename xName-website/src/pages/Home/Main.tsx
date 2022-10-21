@@ -1,16 +1,17 @@
 import axios from 'axios'
 import { constants, utils } from 'ethers'
 import clsx from 'clsx'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { FiFeather } from 'react-icons/fi'
 import { MdLocationSearching } from 'react-icons/md'
+import { toast } from 'react-toastify'
 import { useNetwork, useContract, useSigner } from 'wagmi'
 
 import DotRegistryAbi from '../../abis/DotRegistry.json'
 import Container from '../../components/Container'
 import { DotRegistry } from '../../typechain'
 import { isXNameValid } from '../../utils/web3'
-import { registryContractAddress } from '../../utils/contracts'
+import { registryChainNames, registryContractAddress } from '../../utils/contracts'
 
 export default function HomePageMain() {
   const [inputNameValue, setInputNameValue] = useState<string>('')
@@ -30,6 +31,7 @@ export default function HomePageMain() {
 
   // Hook: Get Owner
   useEffect(() => {
+    // console.log(inputNameValue, registry, isXNameValid(inputNameValue))
     if (!registry) return
     if (!isXNameValid(inputNameValue)) {
       if (nodeOwner !== '') setNodeOwner('')
@@ -37,26 +39,69 @@ export default function HomePageMain() {
     }
 
     const node = utils.namehash(inputNameValue)
-    // console.log(inputValue, node)
+    console.log(inputNameValue, node)
     registry['owner(bytes32)'](node)
       .then((owner) => setNodeOwner(owner))
       .catch((err) => console.error(err))
-  }, [inputNameValue, registry]) // no `nodeOwner` as dependency
+      .finally(() => {
+        if (isOwnerSet) setIsOwnerSet(false)
+      })
+  }, [inputNameValue, registry, isOwnerSet]) // no `nodeOwner` as dependency
 
-  // Hook: Set Owner
-  useEffect(() => {
-    if (!registry || !isXNameValid(inputNameValue) || !utils.isAddress(inputOwnerValue)) return
+  // Trigger: Set Owner
+  const onNameRegister = useCallback(() => {
+    if (!registry || !chain || !isXNameValid(inputNameValue) || !utils.isAddress(inputOwnerValue)) return
     const setOwner = () => {
       const node = utils.namehash(inputNameValue)
-      registry.setOwner(node, inputOwnerValue)
+
+      registry.setOwner(node, inputOwnerValue, { gasLimit: 4_000_000 })
         .then(async (tx) => {
-          await axios.post('http://localhost:8080/register', { txHash: tx.hash })
-          return tx.wait()
+          toast('🦄 Submitted Registration!', {
+            position: 'top-center',
+            autoClose: 100_000, // about 1.5 mins
+            hideProgressBar: false,
+            closeOnClick: false,
+            pauseOnHover: false,
+            draggable: false,
+            progress: undefined,
+            theme: 'dark',
+          })
+
+          await axios.post('http://localhost:8080/register', {
+            txHash: tx.hash,
+            originChain: registryChainNames[chain.id],
+          })
+
+          toast.dismiss()
+          toast('🦄 Registration Successful!', {
+            position: 'top-center',
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: false,
+            pauseOnHover: false,
+            draggable: false,
+            progress: undefined,
+            theme: 'dark',
+          })
         })
         .then(() => setIsOwnerSet(true))
+        .catch((err) => {
+          console.error(err)
+          toast.dismiss()
+          toast('Registration Failed', {
+            position: 'top-center',
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: false,
+            draggable: false,
+            progress: undefined,
+            theme: 'dark',
+          })
+        })
     }
     setOwner()
-  }, [inputNameValue, inputOwnerValue, registry])
+  }, [inputNameValue, inputOwnerValue, registry, chain])
 
   // Hook: Set Default Register/Transfer Owner Address based on Signer
   useEffect(() => {
@@ -131,7 +176,7 @@ export default function HomePageMain() {
                 />
                 <button
                   type="button"
-                  // onClick={() => setInputValue('')}
+                  onClick={() => onNameRegister()}
                   className={clsx(
                     'w-40 btn btn-md border-xName-purple-comp bg-xName-bg text-xName-grey',
                     'hover:border-xName-purple-comp hover:bg-xName-bg hover:text-xName-purple transition-all',

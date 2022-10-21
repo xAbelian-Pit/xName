@@ -1,5 +1,26 @@
+import deployedMock from './deployed-mock.json'
+import deployedTestnet from './deployed-testnet.json'
+
 export const registryContractAddress: { [key: number]: string } = {
-  1: '0x6b39b761b1b64C8C095BF0e3Bb0c6a74705b4788', // local evm 1
-  137: '0xD27464A4f21C2c08888A0F37fEF82199BAFabC48', // local evm 2
-  43114: '0x4EE6eCAD1c2Dae9f525404De8555724e3c35d07B', // local evm 3
+  // localhost
+  // 1: deployedMock.evm1, // local evm 1
+  // 31337: deployedMock.evm1, // local evm 1 (hardhat)
+  // 137: deployedMock.evm2, // local evm 2
+  // 43114: deployedMock.evm3, // local evm 3
+  // testnets
+  5: deployedTestnet.evm1, // ethereum goerli
+  80001: deployedTestnet.evm2, // polygon mumbai
+  43113: deployedTestnet.evm3, // avalanche fuji
+  1001: deployedTestnet.evm4, // klaytn baobab
+}
+
+export const registryChainNames: { [key: number]: string } = {
+  // 1: 'ethereum',
+  // 31337: 'ethereum',
+  // 137: 'polygon',
+  // 43114: 'avalanche',
+  5: 'ethereum', // goerli
+  80001: 'polygon', // mumbai
+  43113: 'avalanche', // fuji
+  1001: 'klaytn', // baobab
 }
