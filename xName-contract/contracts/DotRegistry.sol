@@ -308,7 +308,7 @@ contract DotRegistry is Dot, Ownable {
             }
 
             // two-hunnet for instant finality in testnet
-            sequence = wormhole().publishMessage(nonce, encodeRegistration(reg), 200);
+            sequence = wormhole().publishMessage(nonce, encodeRegistration(res), 200);
             nonce++;
         }
     }
