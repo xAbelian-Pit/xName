@@ -15,7 +15,8 @@ import HomePageMain from './Home/Main'
 import PageNotFound from './PageNotFound'
 
 function AppWrapper({ children }: { children: ReactNode }) {
-  return <div className="flex flex-col justify-between w-screen min-h-screen">{children}</div>
+  // w-screen
+  return <div className="flex flex-col justify-between min-h-screen">{children}</div>
 }
 
 function App() {
