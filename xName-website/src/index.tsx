@@ -25,13 +25,14 @@ import theme from './theme'
 import {
   // localEvm1, localEvm2, localEvm3,
   avalancheFujiChain,
+  klaytnBaobabChain,
 } from './utils/rainbow-chains'
 
 const { chains, provider } = configureChains(
   [
     // localEvm1, // default chain
     // localEvm2, localEvm3,
-    chain.goerli, chain.polygonMumbai, avalancheFujiChain,
+    chain.goerli, chain.polygonMumbai, avalancheFujiChain, klaytnBaobabChain,
   ],
   [
     // alchemyProvider({ alchemyId: process.env.ALCHEMY_ID }),

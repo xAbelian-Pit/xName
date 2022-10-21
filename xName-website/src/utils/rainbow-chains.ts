@@ -44,6 +44,27 @@ export const avalancheFujiChain: Chain = {
   testnet: true,
 }
 
+export const klaytnBaobabChain: Chain = {
+  id: 1001,
+  name: 'Klaytn Baobab',
+  network: 'klaytn-baobab',
+  iconUrl: 'https://cryptologos.cc/logos/klaytn-klay-logo.svg',
+  iconBackground: '#fff',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'Klaytn',
+    symbol: 'KLAY',
+  },
+  rpcUrls: {
+    default: 'https://api.baobab.klaytn.net:8651',
+  },
+  blockExplorers: {
+    default: { name: 'Klaytnscope', url: 'https://baobab.scope.klaytn.com' },
+    etherscan: { name: 'Klaytnscope', url: 'https://baobab.scope.klaytn.com' },
+  },
+  testnet: true,
+}
+
 export const localEvm1: Chain = {
   id: 31337,
   name: 'Local EVM 1',
